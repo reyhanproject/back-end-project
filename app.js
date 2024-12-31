@@ -18,9 +18,31 @@ app.use('/api', contacsRoutes);
 
 
 // Sinkronisasi database dan mulai server
-sequelize.sync({ force: false }) // Set `true` untuk reset database mode dev
-  .then(() => {
-    console.log('Database synced successfully.');
-    app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-  })
-  .catch((error) => console.error('Unable to sync database:', error))
+sequelize
+.authenticate()
+.then(() => {
+    console.log("Koneksi ke database berhasil");
+
+    return sequelize.sync({ force: false });
+    })
+.then(async () => {
+    console.log('Server running on port: ${PORT}');
+    app.listen(PORT, () => console.log('Server running on port: ${PORT}'));
+    })
+.catch((err) => {
+    console.log("Unable to sync database: ", err);
+    });
+
+process.on("SIGINT", async () => {
+    try {
+    await sequelize.close();
+
+    console.log("Koneksi ke database ditutup.");
+} catch (err) {
+    throw new Error("Error saat menutup database");
+} finally {
+    process.exit(0);
+}
+});
+
+  module.exports = app
