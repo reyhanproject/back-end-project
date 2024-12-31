@@ -3,9 +3,9 @@ const Contacts = require("../models/contacts");
 const router = express.Router();
 
 router.post("/contact", async (req, res) => {
-  const {nama, email, pesan} = req.body
+  const {name, email, message} = req.body
   try {
-    const contacs = await Contacts.create({nama, email, pesan});
+    const contacs = await Contacts.create({name, email, message});
     res.status(201).json(contacs);
   } catch (error) {
     res.status(500).json({ message: error.message });
